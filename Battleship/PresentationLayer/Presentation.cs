@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static PresentationLayer.Presentation;
+using static PresentationLayer.Presentation.GameScreen;
 
 namespace PresentationLayer
 {
@@ -24,7 +25,12 @@ namespace PresentationLayer
 
         private GameState gameState = GameState.Initial;
         private Logic logic = new Logic();
-        
+
+        private GameScreen player1GameScreen = new GameScreen(new List<GameScreen.Cell>());
+        private GameScreen player2GameScreen = new GameScreen(new List<GameScreen.Cell>());
+
+
+
         public Presentation() 
         {
 
@@ -127,6 +133,15 @@ namespace PresentationLayer
 
         private void addPlayer()
         {
+            // Instantiate game screens before initializing player grids
+            if (player1GameScreen == null)
+            {
+                player1GameScreen = new GameScreen(new List<GameScreen.Cell>());
+            }
+            if (player2GameScreen == null)
+            {
+                player2GameScreen = new GameScreen(new List<GameScreen.Cell>());
+            }
             players.Clear();
             for (int i = 1; i <= 2; i++) 
             {
@@ -134,6 +149,7 @@ namespace PresentationLayer
                 Console.WriteLine($"Add Player {i} details:");
                 Console.WriteLine("Please enter a username:");
                 string username = Console.ReadLine();
+                player1GameScreen.InitializePlayerGrid(username);
 
                 if (logic.checkifplayerexists(username))
                 {
@@ -164,6 +180,7 @@ namespace PresentationLayer
                     }
                 players.Add(username);
                 }
+                
                 else
                 {
 
@@ -175,6 +192,8 @@ namespace PresentationLayer
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                 }
+                player1GameScreen = new GameScreen(new List<GameScreen.Cell>());
+                player2GameScreen = new GameScreen(new List<GameScreen.Cell>());
             }
         }
 
@@ -229,25 +248,29 @@ namespace PresentationLayer
 
         public void PlayerShipchoice()
         {
-            foreach (var plr in players)
+            // Assuming player1GameScreen and player2GameScreen are initialized and available at class level
+            for (int i = 0; i < players.Count; i++)
             {
-                GameScreen gameScreen = new GameScreen(new List<GameScreen.Cell>());
+                var currentPlayer = players[i];
+                // Select the correct GameScreen instance for the current player
+                var currentGameScreen = (i == 0) ? player1GameScreen : player2GameScreen;
+
                 while (true)
                 {
-                    gameScreen.printgrid();
-                    var unconfiguredShips = logic.GetUnconfiguredShips(currentGameId, plr);
+                    currentGameScreen.printgrid();
+                    var unconfiguredShips = logic.GetUnconfiguredShips(currentGameId, currentPlayer);
                     if (!unconfiguredShips.Any())
                     {
                         Console.WriteLine("All ships have been configured!");
-                        Console.WriteLine($"Congratulations, {plr} all your ships have been placed.");
+                        Console.WriteLine($"Congratulations, {currentPlayer} all your ships have been placed.");
                         Console.ReadKey();
                         break;
                         // Move onto player 2 or onto menu 3
                     }
 
                     Console.Clear();
-                    Console.WriteLine($"{plr}, this is your board:");
-                    gameScreen.printgrid();
+                    Console.WriteLine($"{currentPlayer}, this is your board:");
+                    currentGameScreen.printgrid();
 
                     foreach (var ship in unconfiguredShips)
                     {
@@ -255,7 +278,6 @@ namespace PresentationLayer
                     }
 
                     int shipId = 0;
-                    
                     bool shipValid = false;
                     do
                     {
@@ -271,7 +293,7 @@ namespace PresentationLayer
                                 break;
                             }
                         }
-                        if(shipValid == false)
+                        if (!shipValid)
                         {
                             Console.WriteLine("Invalid ship ID. Please enter a valid ID:");
                         }
@@ -293,46 +315,36 @@ namespace PresentationLayer
                         {
                             Console.WriteLine("Enter starting row (A, B, C, etc.):");
                             startRowChar = Console.ReadLine().ToUpper()[0];
-                            startRow = startRowChar - 'A' + 1; // +1 is removed
-                        } while (startRow < 1 || startRow > GameScreen.height); // Adjusted condition
+                            startRow = startRowChar - 'A' + 1;
+                        } while (startRow < 1 || startRow > GameScreen.height);
 
                         int startColumn;
                         do
                         {
                             Console.WriteLine("Enter starting column (1, 2, 3, etc.):");
-                        } while (!int.TryParse(Console.ReadLine(), out startColumn) || startColumn < 1 || startColumn > GameScreen.width); //why startcolumn < 1?//
+                        } while (!int.TryParse(Console.ReadLine(), out startColumn) || startColumn < 1 || startColumn > GameScreen.width);
 
                         string coordinate = ConvertToCoordinateString(startRow, startColumn);
-                        if (CanPlaceShip(gameScreen, shipId, orientation, startRow, startColumn, plr))
+
+                        // Retrieve the player's grid for the current player
+                        List<Cell> currentPlayerGrid = currentGameScreen.GetPlayerGrid(currentPlayer);
+
+                        if (CanPlaceShip(currentGameScreen, shipId, orientation, startRow, startColumn, currentPlayer))
                         {
                             validPlacement = true;
                             Ship selectedShip = logic.GetShipById(shipId);
-                            
-                            for (int i=0; i<selectedShip.Size; i++)
-                            {
-                                int adjustedRow = startRow - 1; // Adjust for zero-based indexing
-                                int adjustedColumn = startColumn - 1; // Adjust for zero-based indexing
 
-                                if (orientation == 'H')
-                                {
-                                    // For horizontal placement, increment the column
-                                    gameScreen.PlaceShipInGrid(adjustedRow, adjustedColumn + i, selectedShip.Size, orientation);
-                                }
-                                else if (orientation == 'V')
-                                {
-                                    // For vertical placement, increment the row
-                                    gameScreen.PlaceShipInGrid(adjustedRow + i, adjustedColumn, selectedShip.Size, orientation);
-                                }
-                            }
-                            gameScreen.PlaceShipInGrid(startRow, startColumn, selectedShip.Size, orientation);
-                            logic.MarkShipAsConfigured(shipId, currentGameId, plr, coordinate);
+                            // Correctly pass the player's grid to the PlaceShipInGrid method
+                            currentGameScreen.PlaceShipInGrid(startRow, startColumn, selectedShip.Size, orientation, currentPlayerGrid);
+
+                            logic.MarkShipAsConfigured(shipId, currentGameId, currentPlayer, coordinate);
 
                             // Re-fetch the list of unconfigured ships
-                            unconfiguredShips = logic.GetUnconfiguredShips(currentGameId, plr);
+                            unconfiguredShips = logic.GetUnconfiguredShips(currentGameId, currentPlayer);
 
                             Console.Clear();
                             Console.WriteLine("Ship placed successfully. Here's the updated board:");
-                            gameScreen.printgrid();
+                            currentGameScreen.printgrid();
                         }
                         else
                         {
@@ -431,22 +443,37 @@ namespace PresentationLayer
         private bool CanPlaceShip(GameScreen gameScreen, int shipId, char orientation, int startRow, int startColumn, string playerUsername)
         {
             Ship selectedShip = logic.GetShipById(shipId);
-            if (selectedShip == null || selectedShip.IsConfigured())
+            if (selectedShip == null) return false;
+
+            int shipSize = selectedShip.Size;
+            // Check boundaries
+            if (orientation == 'H' && startColumn + shipSize > GameScreen.width) return false;
+            if (orientation == 'V' && startRow + shipSize > GameScreen.height) return false;
+
+            // Retrieve the correct player grid for overlap checks
+            List<Cell> currentPlayerGrid = gameScreen.GetPlayerGrid(playerUsername);
+
+            // Check for overlap using the correct player grid
+            for (int i = 0; i < shipSize; i++)
             {
-                return false;
+                int checkRow = (orientation == 'V') ? startRow + i : startRow;
+                int checkColumn = (orientation == 'H') ? startColumn + i : startColumn;
+
+                // Pass the currentPlayerGrid to IsCellEmpty
+                if (!gameScreen.IsCellEmpty(checkRow, checkColumn, currentPlayerGrid)) return false;
             }
 
-            return gameScreen.IsValidPlacement(selectedShip, orientation, startRow, startColumn, playerUsername);
+            return true; // No boundary issues or overlaps found
         }
-        
+
 
 
         public class GameScreen
         {
             public const int width = 8;  // Width of the game grid
             public const int height = 7; // Height of the game grid
-            private Dictionary<string, List<Cell>> playerGrids = new Dictionary<string, List<Cell>>();
-            private List<Cell> cells;
+            public Dictionary<string, List<Cell>> playerGrids = new Dictionary<string, List<Cell>>();
+            public List<Cell> cells;
             public GameScreen(List<Cell> cells)
             {
                 this.cells = cells;
@@ -459,18 +486,19 @@ namespace PresentationLayer
             {
                 if (!playerGrids.ContainsKey(playerUsername))
                 {
-                    playerGrids[playerUsername] = new List<Cell>();
+                    playerGrids.Add(playerUsername, new List<Cell>());
                 }
             }
 
             // Gets the grid for a specific player
             public List<Cell> GetPlayerGrid(string playerUsername)
             {
-                if (playerGrids.ContainsKey(playerUsername))
+                if (!playerGrids.ContainsKey(playerUsername))
                 {
-                    return playerGrids[playerUsername];
+                    // Initialize an empty list for the player if not found
+                    playerGrids[playerUsername] = new List<Cell>();
                 }
-                return null; // or consider throwing an exception if the username is not found
+                return playerGrids[playerUsername];
             }
             public void printgrid()
             {
@@ -512,6 +540,7 @@ namespace PresentationLayer
             {
                 public int Row { get; set; }
                 public int Column { get; set; }
+                public bool IsOccupied { get; set; } // Indicates if the cell is occupied (part of a ship)
                 public abstract void PrintCell();
             }
 
@@ -537,29 +566,31 @@ namespace PresentationLayer
                     Console.Write(IsHit ? "X " : "O ");
                 }
             }
-            private bool IsCellEmpty(int row, int column, List<Cell> playerGrid)
+            public bool IsCellEmpty(int row, int column, List<Cell> playerGrid)
             {
-                // Check if the cell at the given row and column is empty in the specified player's grid
-                return !playerGrid.Any(c => c.Row == row && c.Column == column);
+                // Find the cell at the specified row and column in the player's grid.
+                var cell = playerGrid.FirstOrDefault(c => c.Row == row && c.Column == column);
+
+                // The cell is considered empty if it doesn't exist in the grid (null) or if it's not occupied.
+                return cell == null || !cell.IsOccupied;
             }
 
-            public void PlaceShipInGrid(int row, int column, int shipSize, char orientation)
+            public void PlaceShipInGrid(int row, int column, int shipSize, char orientation, List<Cell> playerGrid)
             {
                 for (int i = 0; i < shipSize; i++)
                 {
-                    int adjustedRow = row - 1; // Adjust for zero-based indexing
-                    int adjustedColumn = column - 1; // Adjust for zero-based indexing
+                    int adjustedRow = orientation == 'V' ? row + i : row;
+                    int adjustedColumn = orientation == 'H' ? column + i : column;
 
-                    if (orientation == 'H')
+                    // Assuming ShipCell is a subclass of Cell that represents a cell occupied by a ship.
+                    ShipCell shipCell = new ShipCell
                     {
-                        // For horizontal placement, increment the column
-                        cells.Add(new ShipCell { Row = adjustedRow, Column = adjustedColumn + i });
-                    }
-                    else if (orientation == 'V')
-                    {
-                        // For vertical placement, increment the row
-                        cells.Add(new ShipCell { Row = adjustedRow + i, Column = adjustedColumn });
-                    }
+                        Row = adjustedRow,
+                        Column = adjustedColumn,
+                        IsOccupied = true // Mark the cell as occupied
+                    };
+
+                    playerGrid.Add(shipCell); // Add the cell to the player's grid
                 }
             }
             public bool IsValidPlacement(Ship ship, char orientation, int startRow, int startColumn, string playerUsername)
@@ -596,7 +627,6 @@ namespace PresentationLayer
         }
     }
 }
-
 
 
 
