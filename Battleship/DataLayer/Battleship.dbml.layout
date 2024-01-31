@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Battleship">
+  <DataContextMoniker Name="/BattleshipDataContext" />
+  <nestedChildShapes>
+    <classShape Id="46578ca3-0c30-4915-9cb9-e4bdc61927c3" absoluteBounds="3.5, 1.125, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/BattleshipDataContext/Attack" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b4bfb21e-8dbb-42fa-a101-ae1d755522a6" absoluteBounds="3.515, 1.585, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="577694da-eebf-4428-94c7-7b5d12da7b6d" absoluteBounds="2.625, 5.25, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/BattleshipDataContext/Game" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6e32a987-4062-47af-8e81-f35e39284b81" absoluteBounds="2.64, 5.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(4.46875 : 5.25); (4.46875 : 2.89589680989583)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Game/Game_Attack" />
+      <nodes>
+        <classShapeMoniker Id="577694da-eebf-4428-94c7-7b5d12da7b6d" />
+        <classShapeMoniker Id="46578ca3-0c30-4915-9cb9-e4bdc61927c3" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="fd66eed5-079a-4959-a1fd-5a00f88b2457" absoluteBounds="2.25, 3.25, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/BattleshipDataContext/GameShipConfiguration" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8fe9a91c-b7cf-4d1e-a664-cb68fc2ef37d" absoluteBounds="2.265, 3.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(3.4375 : 5.25); (3.4375 : 5.02089680989583)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Game/Game_GameShipConfiguration" />
+      <nodes>
+        <classShapeMoniker Id="577694da-eebf-4428-94c7-7b5d12da7b6d" />
+        <classShapeMoniker Id="fd66eed5-079a-4959-a1fd-5a00f88b2457" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="b2559672-fb80-40d2-8044-ae3619ad2785" absoluteBounds="6.75, 2, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/BattleshipDataContext/Player" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d8e5f439-3ece-4af4-969d-8c537ba95cf3" absoluteBounds="6.765, 2.46, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.75 : 2.44794840494792); (5.5 : 2.44794840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Player/Player_Attack" />
+      <nodes>
+        <classShapeMoniker Id="b2559672-fb80-40d2-8044-ae3619ad2785" />
+        <classShapeMoniker Id="46578ca3-0c30-4915-9cb9-e4bdc61927c3" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.96875 : 3.19399251302083); (6.96875 : 6.08073835123698); (4.625 : 6.08073835123698)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Player/Player_Game" />
+      <nodes>
+        <classShapeMoniker Id="b2559672-fb80-40d2-8044-ae3619ad2785" />
+        <classShapeMoniker Id="577694da-eebf-4428-94c7-7b5d12da7b6d" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(7.2187475 : 3.19399251302083); (7.2187475 : 5.66147170247396); (7.05208333333333 : 5.66147170247396 : JumpStart); (6.88541666666667 : 5.66147170247396 : JumpEnd); (4.625 : 5.66147170247396)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Player/Player_Game1" />
+      <nodes>
+        <classShapeMoniker Id="b2559672-fb80-40d2-8044-ae3619ad2785" />
+        <classShapeMoniker Id="577694da-eebf-4428-94c7-7b5d12da7b6d" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.2812525 : 3.19399251302083); (8.2812525 : 4.13544840494792); (7.30208083333333 : 4.13544840494792 : JumpStart); (7.13541416666667 : 4.13544840494792 : JumpEnd); (7.05208333333333 : 4.13544840494792 : JumpStart); (6.88541666666667 : 4.13544840494792 : JumpEnd); (4.55208333333333 : 4.13544840494792 : JumpStart); (4.38541666666667 : 4.13544840494792 : JumpEnd); (4.25 : 4.13544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Player/Player_GameShipConfiguration" />
+      <nodes>
+        <classShapeMoniker Id="b2559672-fb80-40d2-8044-ae3619ad2785" />
+        <classShapeMoniker Id="fd66eed5-079a-4959-a1fd-5a00f88b2457" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="eb95c973-27dd-4a40-b21d-35c515ebda21" absoluteBounds="7.25, 6.5, 2, 1.3862939453125">
+      <DataClassMoniker Name="/BattleshipDataContext/Ship" />
+      <nestedChildShapes>
+        <elementListCompartment Id="86c093a4-918b-46e5-b1ff-87b45018aafa" absoluteBounds="7.265, 6.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(7.76562625 : 6.5); (7.76562625 : 4.60942510742187); (7.30208083333333 : 4.60942510742187 : JumpStart); (7.13541416666667 : 4.60942510742187 : JumpEnd); (7.05208333333333 : 4.60942510742187 : JumpStart); (6.88541666666667 : 4.60942510742187 : JumpEnd); (4.55208333333333 : 4.60942510742187 : JumpStart); (4.38541666666667 : 4.60942510742187 : JumpEnd); (4.25 : 4.60942510742187)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/BattleshipDataContext/Ship/Ship_GameShipConfiguration" />
+      <nodes>
+        <classShapeMoniker Id="eb95c973-27dd-4a40-b21d-35c515ebda21" />
+        <classShapeMoniker Id="fd66eed5-079a-4959-a1fd-5a00f88b2457" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

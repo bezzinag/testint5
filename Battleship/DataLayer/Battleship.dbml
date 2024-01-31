@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Battleship" Class="BattleshipDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=PITY-DA-FOOL2\SQLEXPRESS;Initial Catalog=Battleship;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" SettingsObjectName="DataLayer.Properties.Settings" SettingsPropertyName="BattleshipConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Attacks" Member="Attacks">
+    <Type Name="Attack">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Hit" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="GameFK" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserNameFK" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Coordinate" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Association Name="Game_Attack" Member="Game" ThisKey="GameFK" OtherKey="ID" Type="Game" IsForeignKey="true" />
+      <Association Name="Player_Attack" Member="Player" ThisKey="UserNameFK" OtherKey="Username" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Games" Member="Games">
+    <Type Name="Game">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Complete" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreatorFK" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="OpponentFK" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Game_Attack" Member="Attacks" ThisKey="ID" OtherKey="GameFK" Type="Attack" />
+      <Association Name="Game_GameShipConfiguration" Member="GameShipConfigurations" ThisKey="ID" OtherKey="GameFK" Type="GameShipConfiguration" />
+      <Association Name="Player_Game" Member="Player" ThisKey="CreatorFK" OtherKey="Username" Type="Player" IsForeignKey="true" />
+      <Association Name="Player_Game1" Member="Player1" ThisKey="OpponentFK" OtherKey="Username" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.GameShipConfigurations" Member="GameShipConfigurations">
+    <Type Name="GameShipConfiguration">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Coordinate" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="PlayerFK" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="GameFK" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ShipFK" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Game_GameShipConfiguration" Member="Game" ThisKey="GameFK" OtherKey="ID" Type="Game" IsForeignKey="true" />
+      <Association Name="Player_GameShipConfiguration" Member="Player" ThisKey="PlayerFK" OtherKey="Username" Type="Player" IsForeignKey="true" />
+      <Association Name="Ship_GameShipConfiguration" Member="Ship" ThisKey="ShipFK" OtherKey="ID" Type="Ship" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Players" Member="Players">
+    <Type Name="Player">
+      <Column Name="Username" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Player_Attack" Member="Attacks" ThisKey="Username" OtherKey="UserNameFK" Type="Attack" />
+      <Association Name="Player_Game" Member="Games" ThisKey="Username" OtherKey="CreatorFK" Type="Game" />
+      <Association Name="Player_Game1" Member="Games1" ThisKey="Username" OtherKey="OpponentFK" Type="Game" />
+      <Association Name="Player_GameShipConfiguration" Member="GameShipConfigurations" ThisKey="Username" OtherKey="PlayerFK" Type="GameShipConfiguration" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Ships" Member="Ships">
+    <Type Name="Ship">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Size" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Ship_GameShipConfiguration" Member="GameShipConfigurations" ThisKey="ID" OtherKey="ShipFK" Type="GameShipConfiguration" />
+    </Type>
+  </Table>
+</Database>
